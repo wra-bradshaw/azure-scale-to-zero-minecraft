@@ -5,6 +5,12 @@
 .terraform/
 *.tfstate
 *.tfstate.*
+*.auto.tfvars
+*.tfvars
+*.tfvars.json
+*.tfbackend
+*.tfbackend.json
+!*.example
 .direnv
 result
 packages/minecraft-runtime-plugin/target/
