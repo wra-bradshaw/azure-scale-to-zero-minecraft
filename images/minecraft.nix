@@ -9,16 +9,6 @@
 
 let
   lib = pkgs.lib;
-  runtimePath = lib.makeBinPath [
-    pkgs.bash
-    pkgs.coreutils
-    pkgs.file
-    pkgs.gawk
-    pkgs.gettext
-    pkgs.gnugrep
-    pkgs.jdk25_headless
-    pkgs.rclone
-  ];
 
   configFormats =
     let
@@ -81,6 +71,27 @@ let
   managedSymlinksFile = writeManagedList "minecraft-managed-symlinks.tsv" managedSymlinks;
   managedFilesFile = writeManagedList "minecraft-managed-files.tsv" managedFiles;
 
+  imageRoot = pkgs.buildEnv {
+    name = "minecraft-image-root";
+    paths = [
+      pkgs.bash
+      pkgs.cacert
+      pkgs.coreutils
+      pkgs.file
+      pkgs.gawk
+      pkgs.gettext
+      pkgs.gnugrep
+      pkgs.jdk25_headless
+      pkgs.rclone
+      root
+    ];
+    pathsToLink = [
+      "/bin"
+      "/etc/ssl/certs"
+      "/opt"
+    ];
+  };
+
   root = pkgs.runCommand "minecraft-root" { } ''
     mkdir -p "$out/opt/minecraft/managed"
     cp ${paperPackage}/lib/minecraft/server.jar "$out/opt/minecraft/server.jar"
@@ -94,17 +105,7 @@ let
   image = pkgs.dockerTools.buildLayeredImage {
     name = "ghcr.io/${repository}/minecraft";
     tag = "dev";
-    contents = [
-      pkgs.bash
-      pkgs.coreutils
-      pkgs.file
-      pkgs.gawk
-      pkgs.gettext
-      pkgs.gnugrep
-      pkgs.jdk25_headless
-      pkgs.rclone
-      root
-    ];
+    contents = [ imageRoot ];
     config = {
       Cmd = [
         "${pkgs.bash}/bin/bash"
@@ -112,7 +113,7 @@ let
       ];
       Env = [
         "MC_DATA_DIR=/srv/minecraft"
-        "PATH=${runtimePath}"
+        "PATH=/bin"
       ];
       WorkingDir = "/srv/minecraft";
     };
