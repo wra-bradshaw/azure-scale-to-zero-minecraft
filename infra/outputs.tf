@@ -10,6 +10,10 @@ output "minecraft_file_share_name" {
   value = module.azure_container_apps.minecraft_file_share_name
 }
 
+output "minecraft_world_container_name" {
+  value = module.azure_container_apps.minecraft_world_container_name
+}
+
 output "gate_container_app_name" {
   value = module.azure_container_apps.gate_container_app_name
 }

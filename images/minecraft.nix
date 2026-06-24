@@ -17,6 +17,7 @@ let
     pkgs.gettext
     pkgs.gnugrep
     pkgs.jdk25_headless
+    pkgs.rclone
   ];
 
   configFormats =
@@ -101,6 +102,7 @@ let
       pkgs.gettext
       pkgs.gnugrep
       pkgs.jdk25_headless
+      pkgs.rclone
       root
     ];
     config = {

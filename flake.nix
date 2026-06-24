@@ -33,15 +33,19 @@
               pkgs.crane
               pkgs.curl
               pkgs.dnsutils
+              pkgs.file
               pkgs.gh
+              pkgs.gettext
               pkgs.go
               pkgs.gopls
               pkgs.gotools
+              pkgs.gnugrep
               pkgs.jdk25_headless
               pkgs.jq
               pkgs.just
               pkgs.netcat
               pkgs.opentofu
+              pkgs.rclone
               pkgs.skopeo
               pkgs.sops
               pkgs.terraform
@@ -116,7 +120,11 @@
             nativeBuildInputs = [
               pkgs.bash
               pkgs.coreutils
+              pkgs.file
               pkgs.gawk
+              pkgs.gettext
+              pkgs.gnugrep
+              pkgs.rclone
               pkgs.ripgrep
             ];
             dontConfigure = true;
