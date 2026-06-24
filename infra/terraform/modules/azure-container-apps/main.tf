@@ -27,20 +27,8 @@ variable "velocity_forwarding_secret" {
   sensitive = true
 }
 
-variable "azure_subscription_id" {
-  type = string
-}
-
-variable "gate_control_plane_role_name" {
-  type = string
-}
-
 variable "minecraft_shutdown_grace" {
   type = string
-}
-
-variable "minecraft_scale_cooldown" {
-  type = number
 }
 
 variable "minecraft_concurrent_sessions" {
@@ -82,6 +70,7 @@ variable "picolimbo_memory" {
 locals {
   name_prefix         = lower(replace(var.resource_name_prefix, "_", "-"))
   minecraft_port      = 25565
+  waiting_port        = 25566
   files_volume_name   = "minecraft-data"
   storage_account     = substr(replace("${local.name_prefix}mcdata", "-", ""), 0, 24)
   resource_group_name = "${local.name_prefix}-rg"
@@ -226,55 +215,11 @@ resource "azurerm_container_app" "minecraft" {
   }
 }
 
-resource "azurerm_container_app" "picolimbo" {
-  name                         = "waiting"
-  container_app_environment_id = azurerm_container_app_environment.minecraft.id
-  resource_group_name          = azurerm_resource_group.minecraft.name
-  revision_mode                = "Single"
-
-  secret {
-    name  = "velocity-forwarding-secret"
-    value = var.velocity_forwarding_secret
-  }
-
-  ingress {
-    external_enabled = false
-    target_port      = local.minecraft_port
-    transport        = "tcp"
-
-    traffic_weight {
-      latest_revision = true
-      percentage      = 100
-    }
-  }
-
-  template {
-    min_replicas = 1
-    max_replicas = 1
-
-    container {
-      name   = "waiting"
-      image  = var.picolimbo_image
-      cpu    = var.picolimbo_cpu
-      memory = var.picolimbo_memory
-
-      env {
-        name        = "VELOCITY_FORWARDING_SECRET"
-        secret_name = "velocity-forwarding-secret"
-      }
-    }
-  }
-}
-
 resource "azurerm_container_app" "gate" {
   name                         = "gate"
   container_app_environment_id = azurerm_container_app_environment.minecraft.id
   resource_group_name          = azurerm_resource_group.minecraft.name
   revision_mode                = "Single"
-
-  identity {
-    type = "SystemAssigned"
-  }
 
   secret {
     name  = "velocity-forwarding-secret"
@@ -304,31 +249,6 @@ resource "azurerm_container_app" "gate" {
       memory = var.gate_memory
 
       env {
-        name  = "SCALER_MODE"
-        value = "azure"
-      }
-
-      env {
-        name  = "AZURE_SUBSCRIPTION_ID"
-        value = var.azure_subscription_id
-      }
-
-      env {
-        name  = "AZURE_RESOURCE_GROUP"
-        value = azurerm_resource_group.minecraft.name
-      }
-
-      env {
-        name  = "AZURE_CONTAINER_APP_NAME"
-        value = azurerm_container_app.minecraft.name
-      }
-
-      env {
-        name  = "AZURE_CONTAINER_APP_ENVIRONMENT"
-        value = azurerm_container_app_environment.minecraft.name
-      }
-
-      env {
         name  = "MC_HOST"
         value = azurerm_container_app.minecraft.name
       }
@@ -350,12 +270,12 @@ resource "azurerm_container_app" "gate" {
 
       env {
         name  = "WAITING_HOST"
-        value = azurerm_container_app.picolimbo.name
+        value = "127.0.0.1"
       }
 
       env {
         name  = "WAITING_PORT"
-        value = tostring(local.minecraft_port)
+        value = tostring(local.waiting_port)
       }
 
       env {
@@ -388,13 +308,24 @@ resource "azurerm_container_app" "gate" {
         secret_name = "velocity-forwarding-secret"
       }
     }
-  }
-}
 
-resource "azurerm_role_assignment" "gate_container_app_control" {
-  scope                = azurerm_container_app.minecraft.id
-  role_definition_name = var.gate_control_plane_role_name
-  principal_id         = azurerm_container_app.gate.identity[0].principal_id
+    container {
+      name   = "waiting"
+      image  = var.picolimbo_image
+      cpu    = var.picolimbo_cpu
+      memory = var.picolimbo_memory
+
+      env {
+        name  = "PICOLIMBO_BIND_PORT"
+        value = tostring(local.waiting_port)
+      }
+
+      env {
+        name        = "VELOCITY_FORWARDING_SECRET"
+        secret_name = "velocity-forwarding-secret"
+      }
+    }
+  }
 }
 
 output "gate_fqdn" {
@@ -415,10 +346,6 @@ output "gate_container_app_name" {
 
 output "minecraft_container_app_name" {
   value = azurerm_container_app.minecraft.name
-}
-
-output "picolimbo_container_app_name" {
-  value = azurerm_container_app.picolimbo.name
 }
 
 output "container_app_environment_name" {

@@ -18,10 +18,6 @@ output "minecraft_container_app_name" {
   value = module.azure_container_apps.minecraft_container_app_name
 }
 
-output "picolimbo_container_app_name" {
-  value = module.azure_container_apps.picolimbo_container_app_name
-}
-
 output "container_app_environment_name" {
   value = module.azure_container_apps.container_app_environment_name
 }

@@ -8,10 +8,7 @@ module "azure_container_apps" {
   picolimbo_image               = var.picolimbo_image
   minecraft_file_share_quota_gb = var.minecraft_file_share_quota_gb
   velocity_forwarding_secret    = var.velocity_forwarding_secret
-  azure_subscription_id         = var.azure_subscription_id
-  gate_control_plane_role_name  = var.gate_control_plane_role_name
   minecraft_shutdown_grace      = var.minecraft_shutdown_grace
-  minecraft_scale_cooldown      = var.minecraft_scale_cooldown
   minecraft_concurrent_sessions = var.minecraft_concurrent_sessions
   gate_min_replicas             = var.gate_min_replicas
   gate_max_replicas             = var.gate_max_replicas

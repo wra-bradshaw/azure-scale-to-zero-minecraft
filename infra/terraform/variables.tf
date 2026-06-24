@@ -55,19 +55,9 @@ variable "minecraft_file_share_quota_gb" {
   default = 100
 }
 
-variable "gate_control_plane_role_name" {
-  type    = string
-  default = "Container Apps Contributor"
-}
-
 variable "minecraft_shutdown_grace" {
   type    = string
   default = "900"
-}
-
-variable "minecraft_scale_cooldown" {
-  type    = number
-  default = 900
 }
 
 variable "minecraft_concurrent_sessions" {
