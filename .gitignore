@@ -7,3 +7,4 @@
 *.tfstate.*
 .direnv
 result
+packages/minecraft-runtime-plugin/target/
