@@ -26,11 +26,8 @@ Export credentials for the current shell:
 
 ```sh
 export GITHUB_TOKEN="$(gh auth token)"
-export CLOUDFLARE_API_KEY="<cloudflare-global-api-key-with-api-token-write-access>"
+export CLOUDFLARE_API_TOKEN="<cloudflare-global-api-key-with-api-token-write-access>"
 ```
-
-The Cloudflare CLI OAuth token is not used here. Use `CLOUDFLARE_API_KEY` for
-bootstrap Cloudflare authentication.
 
 Authenticate to Azure:
 
