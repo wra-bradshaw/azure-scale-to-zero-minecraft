@@ -18,11 +18,6 @@ const (
 )
 
 type Config struct {
-	ScalerMode            string
-	AzureSubscriptionID   string
-	AzureResourceGroup    string
-	AzureContainerAppName string
-	AzureEnvironmentName  string
 	MinecraftServerName   string
 	WaitingServerName     string
 	MinecraftHost         string

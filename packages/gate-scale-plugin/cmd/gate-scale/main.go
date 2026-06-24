@@ -22,22 +22,9 @@ func main() {
 			}
 
 			adapter := gateadapter.New(proxy, nil)
-			var workload scaler.WorkloadClient
-			switch cfg.ScalerMode {
-			case "local":
-				workload = scaler.NoopWorkloadClient{Logger: slog.Default()}
-			case "azure":
-				workload = scaler.AzureContainerAppClient{
-					SubscriptionID:   cfg.AzureSubscriptionID,
-					ResourceGroup:    cfg.AzureResourceGroup,
-					ContainerAppName: cfg.AzureContainerAppName,
-					WakeHost:         cfg.MinecraftHost,
-					WakePort:         cfg.MinecraftPort,
-				}
-			}
 			orchestrator := scaler.NewOrchestrator(
 				cfg,
-				workload,
+				scaler.TCPWakeClient{Host: cfg.MinecraftHost, Port: cfg.MinecraftPort},
 				scaler.MinecraftStatusHealthChecker{Host: cfg.MinecraftHost, Port: cfg.MinecraftPort},
 				adapter.WaitingPlayers(),
 				slog.Default(),
