@@ -1,0 +1,10 @@
+github_owner      = "owner"
+github_repository = "repo"
+
+resource_name_prefix          = "replace-me-mc"
+minecraft_domain              = "mc.example.com"
+cloudflare_zone_id            = "replace-me"
+cloudflare_bootstrap_api_token = "set-locally-only"
+
+state_resource_group_name  = "replace-me-tfstate-rg"
+state_storage_account_name = "replacemetfstate"

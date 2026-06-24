@@ -1,8 +1,3 @@
-variable "cloudflare_api_token" {
-  type      = string
-  sensitive = true
-}
-
 variable "cloudflare_zone_id" {
   type = string
 }
@@ -11,17 +6,8 @@ variable "minecraft_domain" {
   type = string
 }
 
-variable "azure_subscription_id" {
+variable "azure_resource_group_name" {
   type = string
-}
-
-variable "azure_tenant_id" {
-  type = string
-}
-
-variable "azure_location" {
-  type    = string
-  default = "australiaeast"
 }
 
 variable "resource_name_prefix" {
@@ -33,15 +19,11 @@ variable "resource_name_prefix" {
   }
 }
 
-variable "minecraft_image" {
+variable "image_repository" {
   type = string
 }
 
-variable "gate_image" {
-  type = string
-}
-
-variable "picolimbo_image" {
+variable "image_tag" {
   type = string
 }
 
