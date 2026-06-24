@@ -1,0 +1,21 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v17
+      - uses: DeterminateSystems/flake-checker-action@v12
+      - run: nix develop -c just test
+      - run: nix develop -c just script-test
+      - run: nix flake check
+      - run: nix develop -c terraform -chdir=infra/terraform fmt -check -recursive
+      - run: nix develop -c terraform -chdir=infra/terraform init -backend=false
+      - run: nix develop -c terraform -chdir=infra/terraform validate
+      - run: nix develop -c tflint --chdir=infra/terraform

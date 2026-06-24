@@ -1,0 +1,13 @@
+tfc_organization     = "example-org"
+tfc_workspace        = "minecraft-prod"
+cloudflare_zone_id   = "replace-me"
+cloudflare_api_token = "set-in-tfc"
+minecraft_domain     = "mc.example.com"
+azure_subscription_id = "00000000-0000-0000-0000-000000000000"
+azure_location        = "australiaeast"
+resource_name_prefix  = "minecraft-prod"
+minecraft_image      = "ghcr.io/owner/repo/minecraft:prod"
+gate_image           = "ghcr.io/owner/repo/gate-scale:prod"
+picolimbo_image      = "ghcr.io/owner/repo/picolimbo:prod"
+velocity_forwarding_secret = "set-in-tfc"
+minecraft_file_share_quota_gb = 100

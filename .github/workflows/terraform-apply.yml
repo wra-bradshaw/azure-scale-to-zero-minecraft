@@ -1,0 +1,36 @@
+name: terraform-apply
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "infra/terraform/**"
+      - ".github/workflows/terraform-apply.yml"
+  workflow_dispatch:
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v17
+      - run: nix develop -c terraform -chdir=infra/terraform init
+        env:
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+      - run: nix develop -c terraform -chdir=infra/terraform apply -auto-approve
+        env:
+          ARM_USE_OIDC: true
+          ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_TOKEN_app_terraform_io: ${{ secrets.TF_API_TOKEN }}
+          TF_VAR_azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          TF_VAR_gate_image: ghcr.io/${{ github.repository }}/gate-scale:main
+          TF_VAR_picolimbo_image: ghcr.io/${{ github.repository }}/picolimbo:main
+          TF_VAR_minecraft_image: ghcr.io/${{ github.repository }}/minecraft:main
+          TF_VAR_velocity_forwarding_secret: ${{ secrets.VELOCITY_FORWARDING_SECRET }}

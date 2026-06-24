@@ -1,0 +1,35 @@
+name: images
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  images:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image: [gate-scale, picolimbo, minecraft]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@v17
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+      - run: nix build ".#${{ matrix.image }}-image"
+      - run: docker load -i result
+      - name: Push image tags
+        run: |
+          set -euo pipefail
+          src="ghcr.io/${GITHUB_REPOSITORY}/${{ matrix.image }}:dev"
+          sha_tag="ghcr.io/${GITHUB_REPOSITORY}/${{ matrix.image }}:${GITHUB_SHA}"
+          docker tag "${src}" "${sha_tag}"
+          docker push "${sha_tag}"
+          if [[ "${GITHUB_REF_NAME}" == "main" ]]; then
+            env_tag="ghcr.io/${GITHUB_REPOSITORY}/${{ matrix.image }}:main"
+            docker tag "${src}" "${env_tag}"
+            docker push "${env_tag}"
+          fi

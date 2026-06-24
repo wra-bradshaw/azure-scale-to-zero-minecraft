@@ -1,0 +1,9 @@
+.git
+.DS_Store
+.cache/
+.local/
+.terraform/
+*.tfstate
+*.tfstate.*
+.direnv
+result

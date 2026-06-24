@@ -1,0 +1,58 @@
+bind = "0.0.0.0:${PICOLIMBO_BIND_PORT}"
+welcome_message = "<yellow>Starting the main server...</yellow>"
+action_bar = "<gray>You will be transferred automatically.</gray>"
+default_game_mode = "spectator"
+hardcore = false
+fetch_player_skins = false
+reduced_debug_info = true
+accept_transfers = true
+
+[connection]
+keep_alive_interval_seconds = 15
+allow_unsupported_versions = true
+
+[forwarding]
+method = "MODERN"
+secret = "${VELOCITY_FORWARDING_SECRET}"
+
+[world]
+spawn_position = [0.0, 80.0, 0.0]
+spawn_rotation = [0.0, 0.0]
+dimension = "overworld"
+time = "day"
+
+[world.experimental]
+view_distance = 2
+schematic_file = ""
+lock_time = true
+
+[world.boundaries]
+enabled = false
+
+[server_list]
+reply_to_status = true
+max_players = 20
+message_of_the_day = "Minecraft is waking up"
+show_online_player_count = true
+server_icon = ""
+
+[compression]
+threshold = -1
+level = 6
+
+[tab_list]
+enabled = true
+header = "<bold>Server waking</bold>"
+footer = "<gray>Please wait.</gray>"
+player_listed = true
+
+[boss_bar]
+enabled = false
+
+[title]
+enabled = true
+title = "<yellow>Starting server</yellow>"
+subtitle = "<gray>You will be moved automatically.</gray>"
+fade_in = 10
+stay = 70
+fade_out = 20

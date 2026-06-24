@@ -1,0 +1,6 @@
+name: McServerRuntime
+version: 0.1.0
+main: dev.will.mcserver.runtime.McServerRuntimePlugin
+api-version: '1.21'
+description: Runtime lifecycle management for the mc-server Paper instance.
+author: will

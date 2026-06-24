@@ -1,0 +1,36 @@
+services:
+  gate:
+    image: ghcr.io/local/mc-server/gate-scale:dev
+    depends_on:
+      - minecraft
+      - picolimbo
+    environment:
+      SCALER_MODE: local
+      VELOCITY_FORWARDING_SECRET: local-dev-secret
+      MC_HOST: minecraft
+      MC_PORT: "25565"
+      WAITING_HOST: picolimbo
+      WAITING_PORT: "25565"
+      WAKE_TIMEOUT: 30s
+      WAKE_POLL_INTERVAL: 2s
+      WAKE_FAILURE_COOLDOWN: 5s
+    ports:
+      - "25565:25565"
+
+  minecraft:
+    image: ghcr.io/local/mc-server/minecraft:dev
+    environment:
+      MC_EULA: "true"
+      VELOCITY_FORWARDING_SECRET: local-dev-secret
+      SHUTDOWN_GRACE_SECONDS: "86400"
+    volumes:
+      - ./.local/minecraft:/srv/minecraft
+    ports:
+      - "25566:25565"
+
+  picolimbo:
+    image: ghcr.io/local/mc-server/picolimbo:dev
+    environment:
+      VELOCITY_FORWARDING_SECRET: local-dev-secret
+    ports:
+      - "25567:25565"
