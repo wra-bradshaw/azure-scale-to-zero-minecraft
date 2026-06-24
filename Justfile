@@ -6,7 +6,7 @@ default:
 
 fmt:
     gofmt -w packages/gate-scale-plugin
-    terraform -chdir=infra/terraform fmt -recursive
+    terraform -chdir=infra fmt -recursive
 
 dev-image-load IMAGE:
     docker load < "$(nix build --print-out-paths ".#packages.{{LOCAL_DOCKER_SYSTEM}}.{{IMAGE}}-image")"
