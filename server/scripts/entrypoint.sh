@@ -53,12 +53,12 @@ copy_managed_file() {
   local target="$2"
   if [[ -d "${source}" ]]; then
     cp -R -L -- "${source}" "${target}"
-    chmod -R u+w -- "${target}"
+    chmod -R u+w -- "${target}" || true
   elif file --mime-encoding "${source}" | grep -v '\bbinary$' -q; then
     substitute_text_file "${source}" "${target}"
   else
     cp -L -- "${source}" "${target}"
-    chmod u+w -- "${target}"
+    chmod u+w -- "${target}" || true
   fi
 }
 
@@ -87,7 +87,10 @@ apply_managed_paths() {
     backup_existing_path "${target}"
 
     if [[ "${mode}" == "symlink" ]]; then
-      ln -sfn -- "${source}" "${target}"
+      if ! ln -sfn -- "${source}" "${target}"; then
+        echo "failed to symlink ${target}; copying managed path instead" >&2
+        copy_managed_file "${source}" "${target}"
+      fi
     else
       copy_managed_file "${source}" "${target}"
     fi
