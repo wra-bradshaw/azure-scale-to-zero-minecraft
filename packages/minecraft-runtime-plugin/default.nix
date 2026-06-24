@@ -6,7 +6,7 @@ pkgs.maven.buildMavenPackage {
   src = ./.;
 
   mvnJdk = pkgs.jdk21_headless;
-  mvnHash = "sha256-heVNUI1PxGn4eHVEYE32mEaAMGoJ+V6oblK3ucIGmE4=";
+  mvnHash = "sha256-wK7dwaRHyhujwebT/HhrPXtKirMmD3+DXj/KxB+8sUU=";
 
   installPhase = ''
     runHook preInstall
