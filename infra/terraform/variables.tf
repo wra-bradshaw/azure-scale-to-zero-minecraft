@@ -1,11 +1,3 @@
-variable "tfc_organization" {
-  type = string
-}
-
-variable "tfc_workspace" {
-  type = string
-}
-
 variable "cloudflare_api_token" {
   type      = string
   sensitive = true
@@ -23,14 +15,22 @@ variable "azure_subscription_id" {
   type = string
 }
 
+variable "azure_tenant_id" {
+  type = string
+}
+
 variable "azure_location" {
   type    = string
   default = "australiaeast"
 }
 
 variable "resource_name_prefix" {
-  type    = string
-  default = "minecraft"
+  type = string
+
+  validation {
+    condition     = can(regex("^[a-z][a-z0-9-]{1,16}[a-z0-9]$", var.resource_name_prefix))
+    error_message = "resource_name_prefix must be 3-18 lowercase letters, numbers, or hyphens, start with a letter, and end with a letter or number."
+  }
 }
 
 variable "minecraft_image" {
@@ -43,6 +43,24 @@ variable "gate_image" {
 
 variable "picolimbo_image" {
   type = string
+}
+
+variable "container_registry_server" {
+  type    = string
+  default = "ghcr.io"
+}
+
+variable "container_registry_username" {
+  type     = string
+  default  = null
+  nullable = true
+}
+
+variable "container_registry_password" {
+  type      = string
+  default   = null
+  nullable  = true
+  sensitive = true
 }
 
 variable "velocity_forwarding_secret" {

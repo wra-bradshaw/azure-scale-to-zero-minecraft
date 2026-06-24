@@ -6,6 +6,9 @@ module "azure_container_apps" {
   gate_image                    = var.gate_image
   minecraft_image               = var.minecraft_image
   picolimbo_image               = var.picolimbo_image
+  container_registry_server     = var.container_registry_server
+  container_registry_username   = var.container_registry_username
+  container_registry_password   = var.container_registry_password
   minecraft_file_share_quota_gb = var.minecraft_file_share_quota_gb
   velocity_forwarding_secret    = var.velocity_forwarding_secret
   minecraft_shutdown_grace      = var.minecraft_shutdown_grace

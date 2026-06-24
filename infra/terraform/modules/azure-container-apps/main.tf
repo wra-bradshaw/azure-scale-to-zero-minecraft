@@ -18,6 +18,21 @@ variable "picolimbo_image" {
   type = string
 }
 
+variable "container_registry_server" {
+  type = string
+}
+
+variable "container_registry_username" {
+  type     = string
+  nullable = true
+}
+
+variable "container_registry_password" {
+  type      = string
+  nullable  = true
+  sensitive = true
+}
+
 variable "minecraft_file_share_quota_gb" {
   type = number
 }
@@ -72,6 +87,7 @@ locals {
   minecraft_port      = 25565
   waiting_port        = 25566
   files_volume_name   = "minecraft-data"
+  has_registry_auth   = var.container_registry_username != null
   storage_account     = substr(replace("${local.name_prefix}mcdata", "-", ""), 0, 24)
   resource_group_name = "${local.name_prefix}-rg"
   environment_name    = "${local.name_prefix}-aca"
@@ -155,6 +171,25 @@ resource "azurerm_container_app" "minecraft" {
     value = var.velocity_forwarding_secret
   }
 
+  dynamic "secret" {
+    for_each = local.has_registry_auth ? [1] : []
+
+    content {
+      name  = "container-registry-password"
+      value = var.container_registry_password
+    }
+  }
+
+  dynamic "registry" {
+    for_each = local.has_registry_auth ? [1] : []
+
+    content {
+      server               = var.container_registry_server
+      username             = var.container_registry_username
+      password_secret_name = "container-registry-password"
+    }
+  }
+
   ingress {
     external_enabled = false
     target_port      = local.minecraft_port
@@ -224,6 +259,25 @@ resource "azurerm_container_app" "gate" {
   secret {
     name  = "velocity-forwarding-secret"
     value = var.velocity_forwarding_secret
+  }
+
+  dynamic "secret" {
+    for_each = local.has_registry_auth ? [1] : []
+
+    content {
+      name  = "container-registry-password"
+      value = var.container_registry_password
+    }
+  }
+
+  dynamic "registry" {
+    for_each = local.has_registry_auth ? [1] : []
+
+    content {
+      server               = var.container_registry_server
+      username             = var.container_registry_username
+      password_secret_name = "container-registry-password"
+    }
   }
 
   ingress {

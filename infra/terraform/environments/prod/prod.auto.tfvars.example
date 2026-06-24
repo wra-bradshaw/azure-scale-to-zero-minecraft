@@ -1,11 +1,14 @@
-tfc_organization     = "example-org"
-tfc_workspace        = "minecraft-prod"
 cloudflare_zone_id   = "replace-me"
 cloudflare_api_token = "set-in-tfc"
 minecraft_domain     = "mc.example.com"
 azure_subscription_id = "00000000-0000-0000-0000-000000000000"
-azure_tenant_id = "00000000-0000-0000-0000-000000000000"
+azure_tenant_id       = "00000000-0000-0000-0000-000000000000"
+resource_name_prefix  = "replace-me-mc"
 minecraft_image      = "ghcr.io/owner/repo/minecraft:prod"
 gate_image           = "ghcr.io/owner/repo/gate-scale:prod"
 picolimbo_image      = "ghcr.io/owner/repo/picolimbo:prod"
 velocity_forwarding_secret = "set-in-tfc"
+
+# Required only if the container images are private.
+container_registry_username = "github-username"
+container_registry_password = "github-pat-with-package-read"
