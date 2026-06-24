@@ -62,28 +62,35 @@ resource "random_password" "velocity_forwarding_secret" {
   special = false
 }
 
-data "cloudflare_api_token_permission_groups_list" "zone_read" {
+data "cloudflare_zone" "minecraft" {
+  zone_id = var.cloudflare_zone_id
+}
+
+data "cloudflare_account_api_token_permission_groups_list" "zone_read" {
   # Allows Terraform to read the target zone metadata before managing records.
-  name = "Zone Read"
+  account_id = data.cloudflare_zone.minecraft.account.id
+  name       = "Zone Read"
 }
 
-data "cloudflare_api_token_permission_groups_list" "dns_write" {
+data "cloudflare_account_api_token_permission_groups_list" "dns_write" {
   # Allows Terraform to create and update DNS records in only the target zone.
-  name = "DNS Write"
+  account_id = data.cloudflare_zone.minecraft.account.id
+  name       = "DNS Write"
 }
 
-resource "cloudflare_api_token" "github_actions" {
-  name = "${local.github_repository_full_name} GitHub Actions Terraform deploy"
+resource "cloudflare_account_token" "github_actions" {
+  account_id = data.cloudflare_zone.minecraft.account.id
+  name       = "${local.github_repository_full_name} GitHub Actions Terraform deploy"
 
   policies = [{
     effect = "allow"
 
     permission_groups = [
       {
-        id = data.cloudflare_api_token_permission_groups_list.zone_read.result[0].id
+        id = data.cloudflare_account_api_token_permission_groups_list.zone_read.result[0].id
       },
       {
-        id = data.cloudflare_api_token_permission_groups_list.dns_write.result[0].id
+        id = data.cloudflare_account_api_token_permission_groups_list.dns_write.result[0].id
       },
     ]
 
@@ -171,5 +178,5 @@ resource "github_actions_secret" "velocity_forwarding_secret" {
 resource "github_actions_secret" "cloudflare_api_token" {
   repository  = var.github_repository
   secret_name = "CLOUDFLARE_API_TOKEN"
-  value       = cloudflare_api_token.github_actions.value
+  value       = cloudflare_account_token.github_actions.value
 }
