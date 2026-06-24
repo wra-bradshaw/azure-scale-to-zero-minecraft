@@ -53,6 +53,7 @@
               pkgs.terraform-ls
               pkgs.tflint
               pkgs.yq-go
+              pkgs.azure-cli
             ];
           };
         }
