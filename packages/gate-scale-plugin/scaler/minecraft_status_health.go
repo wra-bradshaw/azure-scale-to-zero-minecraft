@@ -11,6 +11,8 @@ import (
 	"time"
 )
 
+const drainingStatusMarker = "mc-server-state=draining"
+
 type MinecraftStatusHealthChecker struct {
 	Host        string
 	Port        int
@@ -36,10 +38,11 @@ func (h MinecraftStatusHealthChecker) Healthy(ctx context.Context) bool {
 	if err := writeStatusHandshake(conn, h.Host, h.Port); err != nil {
 		return h.FallbackTCP
 	}
-	if err := readStatusResponse(conn); err != nil {
+	status, err := readStatusResponse(conn)
+	if err != nil {
 		return h.FallbackTCP
 	}
-	return true
+	return !bytes.Contains(status, []byte(drainingStatusMarker))
 }
 
 func writeStatusHandshake(w io.Writer, host string, port int) error {
@@ -58,31 +61,32 @@ func writeStatusHandshake(w io.Writer, host string, port int) error {
 	return writePacket(w, []byte{0})
 }
 
-func readStatusResponse(r io.Reader) error {
+func readStatusResponse(r io.Reader) ([]byte, error) {
 	reader := bufio.NewReader(r)
 	packetLength, err := readVarInt(reader)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if packetLength <= 0 {
-		return fmt.Errorf("empty minecraft status response")
+		return nil, fmt.Errorf("empty minecraft status response")
 	}
 	packetID, err := readVarInt(reader)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if packetID != 0 {
-		return fmt.Errorf("unexpected minecraft status packet id %d", packetID)
+		return nil, fmt.Errorf("unexpected minecraft status packet id %d", packetID)
 	}
 	responseLength, err := readVarInt(reader)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	if responseLength <= 0 {
-		return fmt.Errorf("empty minecraft status json")
+		return nil, fmt.Errorf("empty minecraft status json")
 	}
-	_, err = io.CopyN(io.Discard, reader, int64(responseLength))
-	return err
+	status := make([]byte, responseLength)
+	_, err = io.ReadFull(reader, status)
+	return status, err
 }
 
 func writePacket(w io.Writer, body []byte) error {
