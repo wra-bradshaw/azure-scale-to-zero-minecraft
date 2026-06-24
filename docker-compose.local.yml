@@ -5,7 +5,6 @@ services:
       - minecraft
       - picolimbo
     environment:
-      SCALER_MODE: local
       VELOCITY_FORWARDING_SECRET: local-dev-secret
       MC_HOST: minecraft
       MC_PORT: "25565"
