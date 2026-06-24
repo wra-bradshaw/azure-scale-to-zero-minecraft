@@ -15,7 +15,7 @@ let
     pname = "gate-scale";
     version = "0.1.0";
     src = ../packages/gate-scale-plugin;
-    vendorHash = "sha256-uVBUpycaynvyI2gy649xRAFwfX4k7Aqgn7C34zLCy4o=";
+    vendorHash = "sha256-+PmaWYdOkVGxbFGWVmW0GjlA7jF4KPbA4st5/LovdTk=";
     proxyVendor = true;
     subPackages = [ "cmd/gate-scale" ];
   };
