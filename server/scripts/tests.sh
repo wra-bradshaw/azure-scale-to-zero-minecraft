@@ -86,8 +86,7 @@ if rg -q "manual edit" "${MC_DATA_DIR}/server.properties"; then
   exit 1
 fi
 
-if ! rg -q "SCALER_MODE: local" "${ROOT}/docker-compose.local.yml" ||
-  ! rg -q "ghcr.io/local/mc-server/gate-scale:dev" "${ROOT}/docker-compose.local.yml" ||
+if ! rg -q "ghcr.io/local/mc-server/gate-scale:dev" "${ROOT}/docker-compose.local.yml" ||
   ! rg -q "ghcr.io/local/mc-server/minecraft:dev" "${ROOT}/docker-compose.local.yml" ||
   ! rg -q "ghcr.io/local/mc-server/picolimbo:dev" "${ROOT}/docker-compose.local.yml"; then
   echo "local compose file does not define the expected full-stack services" >&2

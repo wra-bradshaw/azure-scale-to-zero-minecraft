@@ -1,6 +1,7 @@
 package scaler
 
 import (
+	"bytes"
 	"context"
 	"net"
 	"testing"
@@ -41,4 +42,50 @@ func TestTCPWakeClientEnsureRunningIgnoresDialFailure(t *testing.T) {
 	if err := client.EnsureRunning(context.Background()); err != nil {
 		t.Fatalf("EnsureRunning() error = %v", err)
 	}
+}
+
+func TestMinecraftStatusHealthCheckerTreatsNormalStatusAsHealthy(t *testing.T) {
+	host, port := startStatusServer(t, `{"version":{"name":"Paper","protocol":767},"description":{"text":"ready"}}`)
+
+	checker := MinecraftStatusHealthChecker{Host: host, Port: port, Timeout: time.Second}
+	if !checker.Healthy(context.Background()) {
+		t.Fatal("Healthy() = false, want true")
+	}
+}
+
+func TestMinecraftStatusHealthCheckerTreatsDrainingStatusAsUnhealthy(t *testing.T) {
+	host, port := startStatusServer(t, `{"version":{"name":"Paper","protocol":767},"description":{"text":"mc-server-state=draining"}}`)
+
+	checker := MinecraftStatusHealthChecker{Host: host, Port: port, Timeout: time.Second}
+	if checker.Healthy(context.Background()) {
+		t.Fatal("Healthy() = true, want false")
+	}
+}
+
+func startStatusServer(t *testing.T, status string) (string, int) {
+	t.Helper()
+
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("Listen() error = %v", err)
+	}
+	t.Cleanup(func() {
+		_ = listener.Close()
+	})
+
+	go func() {
+		conn, err := listener.Accept()
+		if err != nil {
+			return
+		}
+		defer conn.Close()
+
+		var body bytes.Buffer
+		writeVarInt(&body, 0)
+		writeString(&body, status)
+		_ = writePacket(conn, body.Bytes())
+	}()
+
+	addr := listener.Addr().(*net.TCPAddr)
+	return "127.0.0.1", addr.Port
 }
