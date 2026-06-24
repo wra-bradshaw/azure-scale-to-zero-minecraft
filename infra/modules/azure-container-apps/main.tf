@@ -146,9 +146,9 @@ resource "azurerm_storage_account" "minecraft" {
 }
 
 resource "azurerm_storage_share" "minecraft" {
-  name                 = "minecraft"
-  storage_account_name = azurerm_storage_account.minecraft.name
-  quota                = var.minecraft_file_share_quota_gb
+  name               = "minecraft"
+  storage_account_id = azurerm_storage_account.minecraft.id
+  quota              = var.minecraft_file_share_quota_gb
 }
 
 resource "azurerm_container_app_environment_storage" "minecraft" {
