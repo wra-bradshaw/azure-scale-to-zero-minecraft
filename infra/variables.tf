@@ -75,7 +75,7 @@ variable "minecraft_file_share_quota_gb" {
 
 variable "minecraft_shutdown_grace" {
   type    = string
-  default = "900"
+  default = "300"
 }
 
 variable "minecraft_concurrent_sessions" {
