@@ -8,6 +8,9 @@ fmt:
     gofmt -w packages/gate-scale-plugin
     terraform -chdir=infra/terraform fmt -recursive
 
+dev-image-load IMAGE:
+    docker load < "$(nix build --print-out-paths ".#packages.{{LOCAL_DOCKER_SYSTEM}}.{{IMAGE}}-image")"
+
 dev-images:
     just dev-image-load gate-scale
     just dev-image-load picolimbo
