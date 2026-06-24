@@ -23,11 +23,6 @@ variable "cloudflare_zone_id" {
   type = string
 }
 
-variable "cloudflare_bootstrap_api_token" {
-  type      = string
-  sensitive = true
-}
-
 variable "state_resource_group_name" {
   type = string
 }

@@ -1,0 +1,6 @@
+resource_group_name  = "replace-me-tfstate-rg"
+storage_account_name = "replacemetfstate"
+container_name       = "tfstate"
+key                  = "mc-server-prod.tfstate"
+use_cli              = true
+use_azuread_auth     = true
