@@ -12,31 +12,52 @@ which is sensitive and ignored by the repository `.gitignore`.
 
 ## Usage
 
-Authenticate to Azure and set a GitHub token that can manage Actions variables
-for the repository:
+Create local bootstrap variables:
 
 ```sh
-export GITHUB_TOKEN="<github-token>"
-export TF_VAR_cloudflare_bootstrap_api_token="<cloudflare-token-with-api-token-write-access>"
-```
-
-Then run:
-
-```sh
-terraform -chdir=infra/bootstrap init
-terraform -chdir=infra/bootstrap apply \
-  -var github_owner="<github-owner>" \
-  -var github_repository="<github-repository-name>" \
-  -var resource_name_prefix="<minecraft-resource-prefix>" \
-  -var minecraft_domain="<minecraft-domain>" \
-  -var cloudflare_zone_id="<cloudflare-zone-id>" \
-  -var cloudflare_bootstrap_api_token="${TF_VAR_cloudflare_bootstrap_api_token}" \
-  -var state_resource_group_name="<state-resource-group>" \
-  -var state_storage_account_name="<globally-unique-storage-account-name>"
+cp infra/bootstrap/bootstrap.auto.tfvars.example infra/bootstrap/local.auto.tfvars
+$EDITOR infra/bootstrap/local.auto.tfvars
 ```
 
 The storage account name must be globally unique, 3-24 characters, and contain
 only lowercase letters and numbers.
+
+Export credentials for the current shell:
+
+```sh
+export GITHUB_TOKEN="$(gh auth token)"
+export CLOUDFLARE_API_KEY="<cloudflare-global-api-key-with-api-token-write-access>"
+```
+
+The Cloudflare CLI OAuth token is not used here. Use `CLOUDFLARE_API_KEY` for
+bootstrap Cloudflare authentication.
+
+Authenticate to Azure:
+
+```sh
+az login
+az account set --subscription "<subscription-id>"
+```
+
+Run bootstrap:
+
+```sh
+terraform -chdir=infra/bootstrap init
+terraform -chdir=infra/bootstrap apply
+```
+
+Create local backend config:
+
+```sh
+cp infra/backend.prod.tfbackend.example infra/backend.prod.tfbackend
+$EDITOR infra/backend.prod.tfbackend
+```
+
+Initialize the main stack:
+
+```sh
+terraform -chdir=infra init -backend-config=backend.prod.tfbackend
+```
 
 The bootstrap stack sets these GitHub repository variables:
 
@@ -68,23 +89,8 @@ Set these GitHub repository secrets manually if needed:
 - Optional: `CONTAINER_REGISTRY_USERNAME`
 - Optional: `CONTAINER_REGISTRY_PASSWORD`
 
-After this stack creates the empty backend, initialize the main stack against
-that backend:
-
-```sh
-terraform -chdir=infra init \
-  -backend-config="resource_group_name=<state-resource-group>" \
-  -backend-config="storage_account_name=<globally-unique-storage-account-name>" \
-  -backend-config="container_name=tfstate" \
-  -backend-config="key=mc-server-prod.tfstate" \
-  -backend-config="use_oidc=true" \
-  -backend-config="use_azuread_auth=true" \
-  -backend-config="client_id=<github-actions-client-id>" \
-  -backend-config="tenant_id=<azure-tenant-id>"
-```
-
-For local initialization with an Azure CLI session, use `use_cli=true` instead
-of `use_oidc=true` and omit `client_id`.
+For GitHub Actions, the workflow uses OIDC backend auth from the repository
+variables written by bootstrap.
 
 Inspect the generated backend and OIDC values with:
 
