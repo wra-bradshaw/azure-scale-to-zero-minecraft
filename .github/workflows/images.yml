@@ -20,7 +20,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@v17
       - uses: DeterminateSystems/magic-nix-cache-action@v13
       - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-      - run: nix build ".#${{ matrix.image }}-image"
+      - run: nix build --impure ".#${{ matrix.image }}-image"
       - run: docker load -i result
       - name: Push image tags
         run: |
