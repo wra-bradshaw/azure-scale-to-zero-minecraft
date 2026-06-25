@@ -1,6 +1,8 @@
 config:
   bind: 0.0.0.0:${GATE_BIND_PORT}
   onlineMode: true
+  status:
+    motd: '{"text":"","extra":[{"text":"||| ","color":"dark_gray","obfuscated":true},{"text":"awesome server","color":"aqua","bold":true},{"text":" |||","color":"dark_gray","obfuscated":true},{"text":"\n"},{"text":"thomas sheard awesome server","color":"gray"}]}'
   forwarding:
     mode: velocity
     velocitySecret: ${VELOCITY_FORWARDING_SECRET}
