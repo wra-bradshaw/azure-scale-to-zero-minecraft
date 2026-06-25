@@ -27,10 +27,10 @@ func main() {
 				cfg,
 				scaler.TCPWakeClient{Host: cfg.MinecraftHost, Port: cfg.MinecraftPort},
 				scaler.MinecraftStatusHealthChecker{Host: cfg.MinecraftHost, Port: cfg.MinecraftPort},
-				adapter.WaitingPlayers(),
+				gateadapter.NewWaitingPlayers(proxy),
 				slog.Default(),
 			)
-			adapter = gateadapter.New(proxy, orchestrator, allowedPlayers...)
+			adapter := gateadapter.New(proxy, orchestrator, gateCfg.ScaleToZero.AllowedPlayers...)
 			adapter.Register()
 			return nil
 		},

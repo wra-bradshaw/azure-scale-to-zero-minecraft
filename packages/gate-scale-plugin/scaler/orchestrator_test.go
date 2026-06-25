@@ -58,8 +58,8 @@ func TestReadinessSuccessTransfersWaitingPlayers(t *testing.T) {
 	player := &fakePlayer{id: "alice"}
 	o := newTestOrchestrator(health, &fakeWorkload{}, &fakePlayers{players: []WaitingPlayer{player}})
 
-	if err := o.WakeForTest(context.Background()); err != nil {
-		t.Fatalf("WakeForTest() error = %v", err)
+	if err := o.wake(context.Background()); err != nil {
+		t.Fatalf("wake() error = %v", err)
 	}
 	if player.connectedTo != "minecraft" {
 		t.Fatalf("connectedTo = %q, want minecraft", player.connectedTo)
@@ -74,8 +74,8 @@ func TestReadinessSuccessWaitsBeforeTransferringPlayers(t *testing.T) {
 	o.cfg.WakeTimeout = time.Second
 
 	start := time.Now()
-	if err := o.WakeForTest(context.Background()); err != nil {
-		t.Fatalf("WakeForTest() error = %v", err)
+	if err := o.wake(context.Background()); err != nil {
+		t.Fatalf("wake() error = %v", err)
 	}
 	if elapsed := time.Since(start); elapsed < o.cfg.TransferDelay {
 		t.Fatalf("elapsed = %s, want at least %s", elapsed, o.cfg.TransferDelay)
@@ -89,9 +89,9 @@ func TestReadinessTimeoutLeavesPlayersWaiting(t *testing.T) {
 	player := &fakePlayer{id: "alice"}
 	o := newTestOrchestrator(&fakeHealth{}, &fakeWorkload{}, &fakePlayers{players: []WaitingPlayer{player}})
 
-	err := o.WakeForTest(context.Background())
+	err := o.wake(context.Background())
 	if err == nil {
-		t.Fatal("WakeForTest() error = nil, want timeout")
+		t.Fatal("wake() error = nil, want timeout")
 	}
 	if player.connectedTo != "" {
 		t.Fatalf("connectedTo = %q, want no transfer", player.connectedTo)
@@ -105,8 +105,8 @@ func TestTransferRetries(t *testing.T) {
 	player := &fakePlayer{id: "alice", failConnects: 2}
 	o := newTestOrchestrator(&fakeHealth{healthy: true}, &fakeWorkload{}, &fakePlayers{players: []WaitingPlayer{player}})
 
-	if err := o.WakeForTest(context.Background()); err != nil {
-		t.Fatalf("WakeForTest() error = %v", err)
+	if err := o.wake(context.Background()); err != nil {
+		t.Fatalf("wake() error = %v", err)
 	}
 	if player.connectCalls != 3 {
 		t.Fatalf("connectCalls = %d, want 3", player.connectCalls)

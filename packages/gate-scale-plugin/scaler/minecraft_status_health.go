@@ -14,10 +14,9 @@ import (
 const drainingStatusMarker = "mc-server-state=draining"
 
 type MinecraftStatusHealthChecker struct {
-	Host        string
-	Port        int
-	Timeout     time.Duration
-	FallbackTCP bool
+	Host    string
+	Port    int
+	Timeout time.Duration
 }
 
 func (h MinecraftStatusHealthChecker) Healthy(ctx context.Context) bool {
@@ -36,11 +35,11 @@ func (h MinecraftStatusHealthChecker) Healthy(ctx context.Context) bool {
 	_ = conn.SetDeadline(time.Now().Add(timeout))
 
 	if err := writeStatusHandshake(conn, h.Host, h.Port); err != nil {
-		return h.FallbackTCP
+		return false
 	}
 	status, err := readStatusResponse(conn)
 	if err != nil {
-		return h.FallbackTCP
+		return false
 	}
 	return !bytes.Contains(status, []byte(drainingStatusMarker))
 }

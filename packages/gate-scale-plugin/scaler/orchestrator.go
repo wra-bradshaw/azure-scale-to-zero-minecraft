@@ -107,10 +107,6 @@ func (o *Orchestrator) State() State {
 	return o.state
 }
 
-func (o *Orchestrator) WakeForTest(ctx context.Context) error {
-	return o.wake(ctx)
-}
-
 func (o *Orchestrator) shouldStartWake() bool {
 	o.mu.Lock()
 	defer o.mu.Unlock()
