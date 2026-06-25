@@ -18,3 +18,4 @@ config:
 scaleToZero:
   allowedPlayers:
     - MrMoose65
+    - womble_too
