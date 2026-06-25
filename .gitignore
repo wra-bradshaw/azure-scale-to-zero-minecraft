@@ -14,3 +14,7 @@
 .direnv
 result
 packages/minecraft-runtime-plugin/target/
+packages/minecraft-runtime-plugin/.classpath
+packages/minecraft-runtime-plugin/.factorypath
+packages/minecraft-runtime-plugin/.project
+packages/minecraft-runtime-plugin/.settings/
