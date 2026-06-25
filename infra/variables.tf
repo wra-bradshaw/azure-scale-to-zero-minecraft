@@ -87,7 +87,7 @@ variable "minecraft_memory" {
 
 variable "gate_cpu" {
   type    = number
-  default = 0.13
+  default = 0.12
 }
 
 variable "gate_memory" {
