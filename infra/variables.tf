@@ -92,7 +92,7 @@ variable "gate_cpu" {
 
 variable "gate_memory" {
   type    = string
-  default = "0.5Gi"
+  default = "0.1Gi"
 }
 
 variable "picolimbo_cpu" {
@@ -102,5 +102,5 @@ variable "picolimbo_cpu" {
 
 variable "picolimbo_memory" {
   type    = string
-  default = "0.5Gi"
+  default = "0.1Gi"
 }
