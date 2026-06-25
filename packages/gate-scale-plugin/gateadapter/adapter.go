@@ -3,7 +3,6 @@ package gateadapter
 import (
 	"context"
 	"fmt"
-	"os"
 	"strings"
 
 	"github.com/robinbraemer/event"
@@ -29,8 +28,8 @@ func New(proxy *gateproxy.Proxy, orchestrator *scaler.Orchestrator, allowedPlaye
 	return &Adapter{proxy: proxy, orchestrator: orchestrator, allowed: allowed}
 }
 
-func AllowedPlayersFromEnv() []string {
-	return splitPlayers(os.Getenv("GATE_ALLOWED_PLAYERS"))
+func NewWaitingPlayers(proxy *gateproxy.Proxy) scaler.WaitingPlayers {
+	return gateWaitingPlayers{proxy: proxy}
 }
 
 func (a *Adapter) Register() {
@@ -39,7 +38,7 @@ func (a *Adapter) Register() {
 }
 
 func (a *Adapter) WaitingPlayers() scaler.WaitingPlayers {
-	return gateWaitingPlayers{proxy: a.proxy}
+	return NewWaitingPlayers(a.proxy)
 }
 
 func (a *Adapter) onChooseInitialServer(e *gateproxy.PlayerChooseInitialServerEvent) {
@@ -59,17 +58,6 @@ func (a *Adapter) onPreLogin(e *gateproxy.PreLoginEvent) {
 		return
 	}
 	e.Deny(&component.Text{Content: "You are not whitelisted on this server."})
-}
-
-func splitPlayers(value string) []string {
-	var players []string
-	for _, player := range strings.Split(value, ",") {
-		player = strings.TrimSpace(player)
-		if player != "" {
-			players = append(players, player)
-		}
-	}
-	return players
 }
 
 type gateWaitingPlayers struct {

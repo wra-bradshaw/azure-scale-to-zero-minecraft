@@ -13,3 +13,6 @@ config:
     enabled: false
   lite:
     enabled: false
+scaleToZero:
+  allowedPlayers:
+    - MrMoose65

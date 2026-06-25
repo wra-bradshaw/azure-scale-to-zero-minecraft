@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log/slog"
+	"os"
 
 	"go.minekube.com/gate/cmd/gate"
 	gateproxy "go.minekube.com/gate/pkg/edition/java/proxy"
@@ -20,9 +21,11 @@ func main() {
 			if err != nil {
 				return err
 			}
-			allowedPlayers := gateadapter.AllowedPlayersFromEnv()
+			gateCfg, err := config.FromGateConfigFile(config.GateConfigPath(os.Args[1:]))
+			if err != nil {
+				return err
+			}
 
-			adapter := gateadapter.New(proxy, nil, allowedPlayers...)
 			orchestrator := scaler.NewOrchestrator(
 				cfg,
 				scaler.TCPWakeClient{Host: cfg.MinecraftHost, Port: cfg.MinecraftPort},

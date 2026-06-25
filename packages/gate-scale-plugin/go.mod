@@ -4,7 +4,9 @@ go 1.26
 
 require (
 	github.com/robinbraemer/event v0.1.1
+	go.minekube.com/common v0.3.0
 	go.minekube.com/gate v0.66.38
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -61,7 +63,6 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	github.com/zyedidia/generic v1.2.1 // indirect
 	go.minekube.com/brigodier v0.0.2 // indirect
-	go.minekube.com/common v0.3.0 // indirect
 	go.minekube.com/connect v0.6.2 // indirect
 	go.minekube.com/geyserlite v0.3.14 // indirect
 	go.minekube.com/vialite v0.1.0 // indirect
@@ -96,5 +97,4 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217 // indirect
 	google.golang.org/grpc v1.79.3 // indirect
 	google.golang.org/protobuf v1.36.11 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
