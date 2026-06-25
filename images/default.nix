@@ -23,6 +23,10 @@ let
     url = "https://cdn.modrinth.com/data/P1OZGk5p/versions/z0sCGSmk/ViaVersion-5.10.1-SNAPSHOT.jar";
     hash = "sha512-v0TfoWe1ii/O9OQKhx82WOytoB9m3U/SekHY9ehFUnng7wrG9kV84cwdGYH8RYwCNC7Cc6fCBHieK+ssQVbUpg==";
   };
+  veinminer = pkgs.fetchurl {
+    url = "https://cdn.modrinth.com/data/OhduvhIc/versions/FZvBlAqk/veinminer-paper-2.10.4.jar";
+    hash = "sha512-yFjiaOakEMfi0emq6KLD4hF6F/rAjqpQfW8T3Nu+CAwMF5/0J8mdcJKe3Cp2TGq0SYXhMK7DovmKGc1kJYhmrw==";
+  };
 
   minecraft = import ./minecraft.nix {
     inherit
@@ -35,6 +39,7 @@ let
     minecraftPlugins = {
       "McServerRuntime.jar" = "${minecraftRuntimePlugin}/McServerRuntime.jar";
       "ViaVersion.jar" = viaVersion;
+      "Veinminer.jar" = veinminer;
     } // minecraftPlugins;
   };
 in

@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Ores",
+    "blocks": [
+      "#c:ores"
+    ],
+    "tools": [
+      "#minecraft:pickaxes"
+    ]
+  },
+  {
+    "name": "Logs",
+    "blocks": [
+      "#minecraft:logs"
+    ],
+    "tools": [
+      "#minecraft:axes"
+    ]
+  }
+]
