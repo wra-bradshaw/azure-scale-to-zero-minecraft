@@ -286,6 +286,11 @@ resource "azurerm_container_app" "gate" {
       }
 
       env {
+        name  = "GATE_ALLOWED_PLAYERS"
+        value = "MrMoose65"
+      }
+
+      env {
         name        = "VELOCITY_FORWARDING_SECRET"
         secret_name = "velocity-forwarding-secret"
       }

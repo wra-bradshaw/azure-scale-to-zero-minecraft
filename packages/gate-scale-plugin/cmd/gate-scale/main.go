@@ -20,8 +20,9 @@ func main() {
 			if err != nil {
 				return err
 			}
+			allowedPlayers := gateadapter.AllowedPlayersFromEnv()
 
-			adapter := gateadapter.New(proxy, nil)
+			adapter := gateadapter.New(proxy, nil, allowedPlayers...)
 			orchestrator := scaler.NewOrchestrator(
 				cfg,
 				scaler.TCPWakeClient{Host: cfg.MinecraftHost, Port: cfg.MinecraftPort},
@@ -29,7 +30,7 @@ func main() {
 				adapter.WaitingPlayers(),
 				slog.Default(),
 			)
-			adapter = gateadapter.New(proxy, orchestrator)
+			adapter = gateadapter.New(proxy, orchestrator, allowedPlayers...)
 			adapter.Register()
 			return nil
 		},
