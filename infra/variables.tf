@@ -55,16 +55,6 @@ variable "minecraft_file_share_quota_gb" {
   default = 100
 }
 
-variable "minecraft_world_container_name" {
-  type    = string
-  default = "minecraft-world"
-}
-
-variable "minecraft_sync_interval_seconds" {
-  type    = number
-  default = 300
-}
-
 variable "minecraft_shutdown_grace" {
   type    = string
   default = "300"

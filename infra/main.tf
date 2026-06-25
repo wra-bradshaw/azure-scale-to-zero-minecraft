@@ -79,12 +79,6 @@ resource "azurerm_storage_share" "minecraft" {
   quota              = var.minecraft_file_share_quota_gb
 }
 
-resource "azurerm_storage_container" "minecraft_world" {
-  name                  = var.minecraft_world_container_name
-  storage_account_id    = azurerm_storage_account.minecraft.id
-  container_access_type = "private"
-}
-
 resource "azurerm_container_app_environment_storage" "minecraft" {
   name                         = local.files_volume_name
   container_app_environment_id = azurerm_container_app_environment.minecraft.id
@@ -103,11 +97,6 @@ resource "azurerm_container_app" "minecraft" {
   secret {
     name  = "velocity-forwarding-secret"
     value = var.velocity_forwarding_secret
-  }
-
-  secret {
-    name  = "azure-storage-key"
-    value = azurerm_storage_account.minecraft.primary_access_key
   }
 
   dynamic "secret" {
@@ -149,6 +138,12 @@ resource "azurerm_container_app" "minecraft" {
       concurrent_requests = var.minecraft_concurrent_sessions
     }
 
+    volume {
+      name         = local.files_volume_name
+      storage_name = azurerm_container_app_environment_storage.minecraft.name
+      storage_type = "AzureFile"
+    }
+
     container {
       name   = "minecraft"
       image  = local.minecraft_image
@@ -171,33 +166,13 @@ resource "azurerm_container_app" "minecraft" {
       }
 
       env {
-        name  = "WORLD_SYNC_BACKEND"
-        value = "azureblob"
-      }
-
-      env {
-        name  = "WORLD_SYNC_INTERVAL_SECONDS"
-        value = tostring(var.minecraft_sync_interval_seconds)
-      }
-
-      env {
-        name  = "AZURE_STORAGE_ACCOUNT"
-        value = azurerm_storage_account.minecraft.name
-      }
-
-      env {
-        name        = "AZURE_STORAGE_KEY"
-        secret_name = "azure-storage-key"
-      }
-
-      env {
-        name  = "AZURE_STORAGE_CONTAINER"
-        value = azurerm_storage_container.minecraft_world.name
-      }
-
-      env {
         name  = "SHUTDOWN_GRACE_SECONDS"
         value = var.minecraft_shutdown_grace
+      }
+
+      volume_mounts {
+        name = local.files_volume_name
+        path = "/srv/minecraft"
       }
     }
   }

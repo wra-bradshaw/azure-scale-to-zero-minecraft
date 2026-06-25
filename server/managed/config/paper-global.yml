@@ -3,3 +3,5 @@ proxies:
     enabled: true
     online-mode: true
     secret: ${VELOCITY_FORWARDING_SECRET}
+system-settings:
+  enable-sync-chunk-writes: false

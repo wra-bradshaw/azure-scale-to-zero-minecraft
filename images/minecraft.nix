@@ -82,7 +82,6 @@ let
       pkgs.gettext
       pkgs.gnugrep
       pkgs.jdk25_headless
-      pkgs.rclone
       root
     ];
     pathsToLink = [

@@ -45,7 +45,6 @@
               pkgs.just
               pkgs.netcat
               pkgs.opentofu
-              pkgs.rclone
               pkgs.skopeo
               pkgs.sops
               pkgs.terraform
@@ -125,7 +124,6 @@
               pkgs.gawk
               pkgs.gettext
               pkgs.gnugrep
-              pkgs.rclone
               pkgs.ripgrep
             ];
             dontConfigure = true;

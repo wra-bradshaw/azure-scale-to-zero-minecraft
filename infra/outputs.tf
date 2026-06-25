@@ -10,10 +10,6 @@ output "minecraft_file_share_name" {
   value = azurerm_storage_share.minecraft.name
 }
 
-output "minecraft_world_container_name" {
-  value = azurerm_storage_container.minecraft_world.name
-}
-
 output "gate_container_app_name" {
   value = azurerm_container_app.gate.name
 }
