@@ -1,7 +1,8 @@
 locals {
   github_repository_full_name = "${var.github_owner}/${var.github_repository}"
   github_deploy_branch        = "main"
-  github_oidc_subject         = "repo:${local.github_repository_full_name}:ref:refs/heads/${local.github_deploy_branch}"
+  github_deploy_environment   = "production"
+  github_oidc_subject         = "repo:${local.github_repository_full_name}:environment:${local.github_deploy_environment}"
   github_actions_app_name     = "${var.github_owner}-${var.github_repository}-github-actions"
   location                    = "australiaeast"
   state_container_name        = "tfstate"
@@ -48,10 +49,10 @@ resource "azuread_service_principal" "github_actions" {
   owners                       = [data.azuread_client_config.current.object_id]
 }
 
-resource "azuread_application_federated_identity_credential" "github_actions_main" {
+resource "azuread_application_federated_identity_credential" "github_actions_production" {
   application_id = azuread_application.github_actions.id
-  display_name   = "${var.github_repository}-${local.github_deploy_branch}"
-  description    = "GitHub Actions deploys from ${local.github_repository_full_name}:${local.github_deploy_branch}"
+  display_name   = "${var.github_repository}-${local.github_deploy_environment}"
+  description    = "GitHub Actions deploys ${local.github_repository_full_name} to ${local.github_deploy_environment}"
   audiences      = ["api://AzureADTokenExchange"]
   issuer         = "https://token.actions.githubusercontent.com"
   subject        = local.github_oidc_subject
@@ -161,22 +162,44 @@ resource "azurerm_role_assignment" "github_actions_state" {
   skip_service_principal_aad_check = true
 }
 
-resource "github_actions_variable" "deploy" {
+resource "github_repository_environment" "production" {
+  repository  = var.github_repository
+  environment = local.github_deploy_environment
+
+  prevent_self_review = true
+  can_admins_bypass   = true
+
+  deployment_branch_policy {
+    protected_branches     = false
+    custom_branch_policies = true
+  }
+}
+
+resource "github_repository_environment_deployment_policy" "production_main" {
+  repository     = var.github_repository
+  environment    = github_repository_environment.production.environment
+  branch_pattern = local.github_deploy_branch
+}
+
+resource "github_actions_environment_variable" "deploy" {
   for_each = local.github_actions_variables
 
   repository    = var.github_repository
+  environment   = github_repository_environment.production.environment
   variable_name = each.key
   value         = each.value
 }
 
-resource "github_actions_secret" "velocity_forwarding_secret" {
+resource "github_actions_environment_secret" "velocity_forwarding_secret" {
   repository  = var.github_repository
+  environment = github_repository_environment.production.environment
   secret_name = "VELOCITY_FORWARDING_SECRET"
   value       = random_password.velocity_forwarding_secret.result
 }
 
-resource "github_actions_secret" "cloudflare_api_token" {
+resource "github_actions_environment_secret" "cloudflare_api_token" {
   repository  = var.github_repository
+  environment = github_repository_environment.production.environment
   secret_name = "CLOUDFLARE_API_TOKEN"
   value       = cloudflare_account_token.github_actions.value
 }

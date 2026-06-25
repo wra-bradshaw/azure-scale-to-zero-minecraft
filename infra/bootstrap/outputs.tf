@@ -32,17 +32,27 @@ output "github_actions_service_principal_object_id" {
   value = azuread_service_principal.github_actions.object_id
 }
 
+output "github_actions_environment" {
+  value = github_repository_environment.production.environment
+}
+
 output "github_oidc_subject" {
-  value = azuread_application_federated_identity_credential.github_actions_main.subject
+  value = azuread_application_federated_identity_credential.github_actions_production.subject
 }
 
 output "github_actions_variables" {
   value = local.github_actions_variables
 }
 
+output "github_actions_environment_variables" {
+  value = [
+    for variable in github_actions_environment_variable.deploy : variable.variable_name
+  ]
+}
+
 output "github_actions_generated_secrets" {
   value = [
-    github_actions_secret.cloudflare_api_token.secret_name,
-    github_actions_secret.velocity_forwarding_secret.secret_name,
+    github_actions_environment_secret.cloudflare_api_token.secret_name,
+    github_actions_environment_secret.velocity_forwarding_secret.secret_name,
   ]
 }
