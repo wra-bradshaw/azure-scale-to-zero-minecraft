@@ -87,20 +87,20 @@ variable "minecraft_memory" {
 
 variable "gate_cpu" {
   type    = number
-  default = 0.25
+  default = 0.125
 }
 
 variable "gate_memory" {
   type    = string
-  default = "0.1Gi"
+  default = "0.25Gi"
 }
 
 variable "picolimbo_cpu" {
   type    = number
-  default = 0.25
+  default = 0.125
 }
 
 variable "picolimbo_memory" {
   type    = string
-  default = "0.1Gi"
+  default = "0.25Gi"
 }
